@@ -25,7 +25,7 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
     >
       <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
         <span style={{ fontSize: 16, fontWeight: 800, color: "#f1f5f9", letterSpacing: "-0.02em" }}>
-          Finchum Debt Tracker
+          Debt Tracker
         </span>
       </div>
 
