@@ -1,6 +1,7 @@
 import { useState } from "react";
-import type { CSSProperties, FormEvent } from "react";
+import type { FormEvent } from "react";
 import { supabase } from "../lib/supabaseClient";
+import { useTheme } from "../hooks/useTheme";
 
 type Mode = "signin" | "signup";
 
@@ -10,6 +11,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ initialMode, onClose }: AuthModalProps) {
+  const { colors } = useTheme();
   const [mode, setMode] = useState<Mode>(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,6 +57,30 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
     setNotice("Account created — check your email to confirm it before signing in.");
   }
 
+  const inputStyle = {
+    display: "block" as const,
+    width: "100%",
+    marginTop: 6,
+    background: colors.surfaceAlt,
+    border: `1px solid ${colors.borderInput}`,
+    borderRadius: 8,
+    color: colors.text,
+    fontSize: 15,
+    padding: "9px 12px",
+    boxSizing: "border-box" as const,
+    outline: "none",
+  };
+
+  const linkStyle = {
+    background: "none",
+    border: "none",
+    color: colors.accent,
+    fontWeight: 600,
+    fontSize: 13,
+    cursor: "pointer" as const,
+    padding: 0,
+  };
+
   return (
     <div
       onClick={onClose}
@@ -75,8 +101,8 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
         style={{
           width: "100%",
           maxWidth: 360,
-          background: "#0f172a",
-          border: "1px solid #1e293b",
+          background: colors.surface,
+          border: `1px solid ${colors.border}`,
           borderRadius: 16,
           padding: "32px 28px",
           display: "flex",
@@ -95,7 +121,7 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
             right: 14,
             background: "none",
             border: "none",
-            color: "#475569",
+            color: colors.textMuted2,
             fontSize: 18,
             cursor: "pointer",
             lineHeight: 1,
@@ -104,14 +130,14 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
           ×
         </button>
 
-        <div style={{ fontSize: 11, color: "#3b82f6", textTransform: "uppercase", letterSpacing: "0.12em" }}>
+        <div style={{ fontSize: 11, color: colors.accent, textTransform: "uppercase", letterSpacing: "0.12em" }}>
           Debt Tracker
         </div>
-        <h1 style={{ fontSize: 22, fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.02em", color: "#f1f5f9" }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.02em", color: colors.text }}>
           {mode === "signin" ? "Sign in" : "Create your account"}
         </h1>
 
-        <label style={{ fontSize: 12, color: "#64748b" }}>
+        <label style={{ fontSize: 12, color: colors.textMuted }}>
           Email
           <input
             type="email"
@@ -122,7 +148,7 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
             style={inputStyle}
           />
         </label>
-        <label style={{ fontSize: 12, color: "#64748b" }}>
+        <label style={{ fontSize: 12, color: colors.textMuted }}>
           Password
           <input
             type="password"
@@ -135,12 +161,12 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
         </label>
 
         {error && (
-          <div style={{ color: "#ef4444", fontSize: 13, background: "rgba(239,68,68,0.12)", padding: "8px 10px", borderRadius: 8 }}>
+          <div style={{ color: colors.red, fontSize: 13, background: `${colors.red}1f`, padding: "8px 10px", borderRadius: 8 }}>
             {error}
           </div>
         )}
         {notice && (
-          <div style={{ color: "#22c55e", fontSize: 13, background: "rgba(34,197,94,0.12)", padding: "8px 10px", borderRadius: 8 }}>
+          <div style={{ color: colors.green, fontSize: 13, background: `${colors.green}1f`, padding: "8px 10px", borderRadius: 8 }}>
             {notice}
           </div>
         )}
@@ -150,7 +176,7 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
           disabled={submitting}
           style={{
             marginTop: 8,
-            background: "#3b82f6",
+            background: colors.accent,
             border: "none",
             borderRadius: 8,
             color: "#fff",
@@ -164,7 +190,7 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
           {submitting ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
         </button>
 
-        <div style={{ textAlign: "center", fontSize: 13, color: "#64748b" }}>
+        <div style={{ textAlign: "center", fontSize: 13, color: colors.textMuted }}>
           {mode === "signin" ? (
             <>
               Don't have an account?{" "}
@@ -185,27 +211,3 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
     </div>
   );
 }
-
-const inputStyle: CSSProperties = {
-  display: "block",
-  width: "100%",
-  marginTop: 6,
-  background: "#1e293b",
-  border: "1px solid #334155",
-  borderRadius: 8,
-  color: "#f1f5f9",
-  fontSize: 15,
-  padding: "9px 12px",
-  boxSizing: "border-box",
-  outline: "none",
-};
-
-const linkStyle: CSSProperties = {
-  background: "none",
-  border: "none",
-  color: "#3b82f6",
-  fontWeight: 600,
-  fontSize: 13,
-  cursor: "pointer",
-  padding: 0,
-};

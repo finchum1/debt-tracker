@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Plus, Trash2, Check,
 // Adjust this import to wherever your project creates its Supabase client, e.g.:
 //   export const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 import { supabase } from '../lib/supabaseClient';
+import { useTheme } from '../hooks/useTheme';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -11,17 +12,8 @@ const MONTH_NAMES = [
 const MONTH_ABBR = MONTH_NAMES.map((m) => m.slice(0, 3));
 const WEEKDAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-// Palette matches the rest of the app (see src/types.ts GROUP_COLORS / CardPanel.tsx)
-// so this page reads as part of the same product instead of a separate design.
-const INK = '#f1f5f9';       // primary text (light, on the app's dark canvas)
-const PAPER = '#020817';     // page background
-const SURFACE = '#1e293b';   // input/textarea surfaces
-const ACCENT = '#3b82f6';    // primary buttons / active tab state
-const LINE = '#334155';      // borders/dividers
-const MUTED = '#64748b';     // secondary/muted text
-const SAGE = '#22c55e';      // positive / cleared / paid off
-const AMBER = '#f59e0b';     // paid, pending bank clearance
-const RUST = '#ef4444';      // overdue
+// Fonts match the rest of the app; colors come from useTheme() (see below) so this
+// page follows the same light/dark toggle instead of having its own separate palette.
 const MONO = "'Inter', 'SF Pro Display', -apple-system, sans-serif";
 const SERIF = "'Inter', 'SF Pro Display', -apple-system, sans-serif";
 
@@ -54,7 +46,8 @@ function isDone(status) {
   return !!(status && status.paid && status.cleared);
 }
 
-function renderNotes(text, onToggleCheckbox) {
+function renderNotes(text, onToggleCheckbox, colors) {
+  const { text: INK, textMuted: MUTED, green: SAGE } = colors;
   const lines = text.split('\n');
   return lines.map((line, idx) => {
     const trimmed = line.trim();
@@ -107,6 +100,8 @@ function renderNotes(text, onToggleCheckbox) {
 }
 
 function StampCheck({ checked, onClick, color, label, size = 30 }) {
+  const { colors } = useTheme();
+  const { text: INK, border: LINE } = colors;
   const iconSize = Math.round(size * 0.52);
   return (
     <button
@@ -136,6 +131,8 @@ function StampCheck({ checked, onClick, color, label, size = 30 }) {
 }
 
 function ListRow({ bill, status, displayDay, overdue, dimmed, onTogglePaid, onToggleCleared, onDelete }) {
+  const { colors } = useTheme();
+  const { text: INK, border: LINE, textMuted: MUTED, red: RUST, amber: AMBER, green: SAGE } = colors;
   return (
     <div className="group flex items-center" style={{ padding: '10px 0', borderBottom: `1px solid ${LINE}`, opacity: dimmed ? 0.55 : 1 }}>
       <div style={{ width: 40, fontFamily: MONO, fontSize: '0.85rem', fontWeight: 500, color: overdue ? RUST : INK }}>
@@ -170,6 +167,8 @@ function ListRow({ bill, status, displayDay, overdue, dimmed, onTogglePaid, onTo
 }
 
 function CollapsibleDone({ count, open, onToggle, children }) {
+  const { colors } = useTheme();
+  const { border: LINE, green: SAGE } = colors;
   if (count === 0) return null;
   return (
     <div style={{ marginTop: 8 }}>
@@ -199,6 +198,16 @@ function CollapsibleDone({ count, open, onToggle, children }) {
 }
 
 export default function BillTracker() {
+  const { colors } = useTheme();
+  const INK = colors.text;
+  const PAPER = colors.bg;
+  const SURFACE = colors.surfaceAlt;
+  const ACCENT = colors.accent;
+  const LINE = colors.border;
+  const MUTED = colors.textMuted;
+  const SAGE = colors.green;
+  const AMBER = colors.amber;
+  const RUST = colors.red;
   const today = new Date();
   const todayZero = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const [currentDate, setCurrentDate] = useState(todayZero);
@@ -865,7 +874,7 @@ export default function BillTracker() {
                       display: 'flex',
                       flexDirection: 'column',
                       gap: 3,
-                      background: cell.isToday ? 'rgba(34,197,94,0.08)' : 'transparent'
+                      background: cell.isToday ? `${SAGE}14` : 'transparent'
                     }}
                   >
                     <div style={{ fontFamily: MONO, fontSize: 11, fontWeight: cell.isToday ? 600 : 500, color: INK }}>{cell.day}</div>
@@ -1048,7 +1057,7 @@ export default function BillTracker() {
                 </div>
               </>
             ) : (notesByMonth[mk] || '').trim() ? (
-              <div>{renderNotes(notesByMonth[mk], toggleNoteCheckbox)}</div>
+              <div>{renderNotes(notesByMonth[mk], toggleNoteCheckbox, colors)}</div>
             ) : (
               <div style={{ fontSize: '0.85rem', color: MUTED }}>No notes yet for {MONTH_NAMES[month]} — click Edit to add some.</div>
             )}

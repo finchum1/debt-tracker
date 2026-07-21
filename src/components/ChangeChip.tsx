@@ -1,9 +1,12 @@
+import { useTheme } from "../hooks/useTheme";
+
 export function ChangeChip({ value }: { value: number | null }) {
+  const { colors } = useTheme();
   if (value === null || Number.isNaN(value)) return null;
   const down = value < 0;
   const zero = value === 0;
-  const color = zero ? "#94a3b8" : down ? "#22c55e" : "#ef4444";
-  const bg = zero ? "#1e293b" : down ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)";
+  const color = zero ? colors.textMuted3 : down ? colors.green : colors.red;
+  const bg = zero ? colors.surfaceAlt : down ? `${colors.green}1f` : `${colors.red}1f`;
   const label = zero ? "0.00%" : `${down ? "▼" : "▲"} ${Math.abs(value).toFixed(2)}%`;
 
   return (

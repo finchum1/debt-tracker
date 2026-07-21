@@ -1,6 +1,8 @@
 import type { Session } from "@supabase/supabase-js";
 import { NavLink } from "react-router-dom";
+import { Moon, Sun } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
+import { useTheme } from "../hooks/useTheme";
 
 interface HeaderProps {
   session: Session | null;
@@ -8,17 +10,19 @@ interface HeaderProps {
   onSignup: () => void;
 }
 
-const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
-  fontSize: 13,
-  fontWeight: 600 as const,
-  color: isActive ? "#f1f5f9" : "#64748b",
-  textDecoration: "none",
-  padding: "6px 10px",
-  borderRadius: 6,
-  background: isActive ? "#1e293b" : "transparent",
-});
-
 export function Header({ session, onLogin, onSignup }: HeaderProps) {
+  const { mode, colors, toggleTheme } = useTheme();
+
+  const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
+    fontSize: 13,
+    fontWeight: 600 as const,
+    color: isActive ? colors.text : colors.textMuted,
+    textDecoration: "none",
+    padding: "6px 10px",
+    borderRadius: 6,
+    background: isActive ? colors.surfaceAlt : "transparent",
+  });
+
   return (
     <header
       style={{
@@ -29,13 +33,13 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
         alignItems: "center",
         justifyContent: "space-between",
         padding: "14px 24px",
-        background: "rgba(15, 23, 42, 0.85)",
+        background: colors.headerBg,
         backdropFilter: "blur(8px)",
-        borderBottom: "1px solid #1e293b",
+        borderBottom: `1px solid ${colors.border}`,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-        <span style={{ fontSize: 16, fontWeight: 800, color: "#f1f5f9", letterSpacing: "-0.02em" }}>
+        <span style={{ fontSize: 16, fontWeight: 800, color: colors.text, letterSpacing: "-0.02em" }}>
           Debt Tracker
         </span>
         {session && (
@@ -50,58 +54,80 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
         )}
       </div>
 
-      {session ? (
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <span style={{ fontSize: 13, color: "#64748b" }}>{session.user.email}</span>
-          <button
-            onClick={() => supabase.auth.signOut()}
-            style={{
-              background: "none",
-              border: "1px solid #1e293b",
-              borderRadius: 8,
-              color: "#94a3b8",
-              fontSize: 13,
-              padding: "7px 14px",
-              cursor: "pointer",
-            }}
-          >
-            Sign out
-          </button>
-        </div>
-      ) : (
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <button
-            onClick={onLogin}
-            style={{
-              background: "none",
-              border: "1px solid #1e293b",
-              borderRadius: 8,
-              color: "#94a3b8",
-              fontSize: 13,
-              fontWeight: 600,
-              padding: "8px 16px",
-              cursor: "pointer",
-            }}
-          >
-            Log in
-          </button>
-          <button
-            onClick={onSignup}
-            style={{
-              background: "#3b82f6",
-              border: "none",
-              borderRadius: 8,
-              color: "#fff",
-              fontSize: 13,
-              fontWeight: 700,
-              padding: "8px 16px",
-              cursor: "pointer",
-            }}
-          >
-            Sign up
-          </button>
-        </div>
-      )}
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <button
+          onClick={toggleTheme}
+          title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          style={{
+            background: "none",
+            border: `1px solid ${colors.border}`,
+            borderRadius: 8,
+            color: colors.textMuted3,
+            width: 32,
+            height: 32,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+          }}
+        >
+          {mode === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+        </button>
+
+        {session ? (
+          <>
+            <span style={{ fontSize: 13, color: colors.textMuted }}>{session.user.email}</span>
+            <button
+              onClick={() => supabase.auth.signOut()}
+              style={{
+                background: "none",
+                border: `1px solid ${colors.border}`,
+                borderRadius: 8,
+                color: colors.textMuted3,
+                fontSize: 13,
+                padding: "7px 14px",
+                cursor: "pointer",
+              }}
+            >
+              Sign out
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={onLogin}
+              style={{
+                background: "none",
+                border: `1px solid ${colors.border}`,
+                borderRadius: 8,
+                color: colors.textMuted3,
+                fontSize: 13,
+                fontWeight: 600,
+                padding: "8px 16px",
+                cursor: "pointer",
+              }}
+            >
+              Log in
+            </button>
+            <button
+              onClick={onSignup}
+              style={{
+                background: colors.accent,
+                border: "none",
+                borderRadius: 8,
+                color: "#fff",
+                fontSize: 13,
+                fontWeight: 700,
+                padding: "8px 16px",
+                cursor: "pointer",
+              }}
+            >
+              Sign up
+            </button>
+          </>
+        )}
+      </div>
     </header>
   );
 }

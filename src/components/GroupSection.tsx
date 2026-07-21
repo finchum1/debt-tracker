@@ -4,6 +4,7 @@ import { GROUP_COLORS } from "../types";
 import { formatCurrency, getCurrentBalance, pct } from "../lib/debt";
 import { ChangeChip } from "./ChangeChip";
 import { CardPanel } from "./CardPanel";
+import { useTheme } from "../hooks/useTheme";
 
 interface GroupSectionProps {
   group: Group;
@@ -24,6 +25,7 @@ export function GroupSection({
   onDeleteEntry,
   onAddAccount,
 }: GroupSectionProps) {
+  const { colors } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
   const color = GROUP_COLORS[group];
 
@@ -54,30 +56,30 @@ export function GroupSection({
           cursor: "pointer",
           paddingBottom: 10,
           marginBottom: 14,
-          borderBottom: "1px solid #1e293b",
+          borderBottom: `1px solid ${colors.border}`,
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ width: 8, height: 8, borderRadius: 99, background: color, display: "inline-block" }} />
-          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#f1f5f9", margin: 0, letterSpacing: "-0.01em" }}>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: colors.text, margin: 0, letterSpacing: "-0.01em" }}>
             {group}
           </h2>
-          <span style={{ fontSize: 12, color: "#475569" }}>
+          <span style={{ fontSize: 12, color: colors.textMuted2 }}>
             {accounts.length} {accounts.length === 1 ? "account" : "accounts"}
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           {groupMonthly > 0 && (
-            <span style={{ fontSize: 12, color: "#64748b" }}>
+            <span style={{ fontSize: 12, color: colors.textMuted }}>
               {formatCurrency(groupMonthly)}
-              <span style={{ color: "#334155" }}>/mo</span>
+              <span style={{ color: colors.borderInput }}>/mo</span>
             </span>
           )}
-          <span style={{ fontSize: 15, fontWeight: 700, color: "#f1f5f9", fontVariantNumeric: "tabular-nums" }}>
+          <span style={{ fontSize: 15, fontWeight: 700, color: colors.text, fontVariantNumeric: "tabular-nums" }}>
             {formatCurrency(groupCurrent)}
           </span>
           {groupPct !== null && <ChangeChip value={groupPct} />}
-          <span style={{ color: "#475569", fontSize: 12 }}>{collapsed ? "▶" : "▼"}</span>
+          <span style={{ color: colors.textMuted2, fontSize: 12 }}>{collapsed ? "▶" : "▼"}</span>
         </div>
       </div>
 

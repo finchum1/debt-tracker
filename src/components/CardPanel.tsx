@@ -5,6 +5,8 @@ import { GROUPS, GROUP_COLORS } from "../types";
 import { formatCurrency, getCurrentBalance, getPreviousBalance, pct, sortedEntries } from "../lib/debt";
 import { ChangeChip } from "./ChangeChip";
 import { ProgressBar } from "./ProgressBar";
+import { useTheme } from "../hooks/useTheme";
+import type { Palette } from "../hooks/useTheme";
 
 function currentMonthKey() {
   const now = new Date();
@@ -20,6 +22,7 @@ interface CardPanelProps {
 }
 
 export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEntry }: CardPanelProps) {
+  const { colors } = useTheme();
   const [showHistory, setShowHistory] = useState(false);
   const [newBalance, setNewBalance] = useState("");
   const [newMonth, setNewMonth] = useState(currentMonthKey());
@@ -32,6 +35,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
   const startNum = account.starting_balance !== null ? Number(account.starting_balance) : null;
   const groupColor = GROUP_COLORS[account.category] ?? GROUP_COLORS.Other;
   const entries = sortedEntries(account);
+  const fieldInputStyle = getFieldInputStyle(colors);
 
   function parseNumber(val: string): number | null {
     const num = parseFloat(val.replace(/[^0-9.]/g, ""));
@@ -57,8 +61,8 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
   return (
     <div
       style={{
-        background: "#0f172a",
-        border: "1px solid #1e293b",
+        background: colors.surface,
+        border: `1px solid ${colors.border}`,
         borderTop: `2px solid ${groupColor}`,
         borderRadius: 16,
         padding: "20px 24px 20px",
@@ -78,10 +82,10 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
                 if (e.key === "Enter") saveName();
               }}
               style={{
-                background: "#1e293b",
-                border: "1px solid #3b82f6",
+                background: colors.surfaceAlt,
+                border: `1px solid ${colors.accent}`,
                 borderRadius: 8,
-                color: "#f1f5f9",
+                color: colors.text,
                 fontSize: 17,
                 fontWeight: 700,
                 padding: "4px 10px",
@@ -96,10 +100,10 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
               }}
               style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "block" }}
             >
-              <span style={{ color: "#f1f5f9", fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em" }}>
+              <span style={{ color: colors.text, fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em" }}>
                 {account.name}
               </span>
-              <span style={{ color: "#475569", fontSize: 12, marginLeft: 6 }}>✎</span>
+              <span style={{ color: colors.textMuted2, fontSize: 12, marginLeft: 6 }}>✎</span>
             </button>
           )}
           <div style={{ marginTop: 6 }}>
@@ -107,7 +111,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
               value={account.category}
               onChange={(e) => onUpdate(account.id, { category: e.target.value as Group })}
               style={{
-                background: "#1e293b",
+                background: colors.surfaceAlt,
                 border: `1px solid ${groupColor}40`,
                 borderRadius: 6,
                 color: groupColor,
@@ -121,7 +125,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
               }}
             >
               {GROUPS.map((g) => (
-                <option key={g} value={g} style={{ color: "#f1f5f9", background: "#1e293b" }}>
+                <option key={g} value={g} style={{ color: colors.text, background: colors.surfaceAlt }}>
                   {g}
                 </option>
               ))}
@@ -131,7 +135,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
         <button
           onClick={() => onDelete(account.id)}
           title="Remove account"
-          style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", fontSize: 18, lineHeight: 1 }}
+          style={{ background: "none", border: "none", color: colors.textMuted2, cursor: "pointer", fontSize: 18, lineHeight: 1 }}
         >
           ×
         </button>
@@ -168,8 +172,8 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
               onBlur={(e) => onUpdate(account.id, { apr: parseNumber(e.target.value) })}
               style={{
                 ...fieldInputStyle,
-                border: `1px solid ${account.apr !== null && Number(account.apr) >= 20 ? "#ef444460" : "#334155"}`,
-                color: account.apr !== null && Number(account.apr) >= 20 ? "#fca5a5" : "#f1f5f9",
+                border: `1px solid ${account.apr !== null && Number(account.apr) >= 20 ? `${colors.red}60` : colors.borderInput}`,
+                color: account.apr !== null && Number(account.apr) >= 20 ? colors.redSoft : colors.text,
                 padding: "8px 22px 8px 12px",
               }}
             />
@@ -180,7 +184,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
                 top: "50%",
                 transform: "translateY(-50%)",
                 fontSize: 13,
-                color: "#475569",
+                color: colors.textMuted2,
                 pointerEvents: "none",
               }}
             >
@@ -197,7 +201,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
             style={{
               fontSize: 30,
               fontWeight: 800,
-              color: "#f1f5f9",
+              color: colors.text,
               letterSpacing: "-0.03em",
               fontVariantNumeric: "tabular-nums",
             }}
@@ -206,14 +210,14 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
           </span>
           {entries.length > 1 && (
             <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <span style={{ fontSize: 10, color: "#475569" }}>vs last month</span>
+              <span style={{ fontSize: 10, color: colors.textMuted2 }}>vs last month</span>
               <ChangeChip value={change} />
             </span>
           )}
         </div>
         {startNum !== null && current !== null && (
           <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 6 }}>
-            <span style={{ fontSize: 10, color: "#475569" }}>vs starting balance</span>
+            <span style={{ fontSize: 10, color: colors.textMuted2 }}>vs starting balance</span>
             <ChangeChip value={pct(current, startNum)} />
           </div>
         )}
@@ -221,7 +225,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
 
       {startNum !== null && current !== null && <ProgressBar start={startNum} current={current} />}
 
-      <div style={{ marginTop: 20, background: "#1e293b", borderRadius: 10, padding: "14px 14px 12px" }}>
+      <div style={{ marginTop: 20, background: colors.surfaceAlt, borderRadius: 10, padding: "14px 14px 12px" }}>
         <FieldLabel>Add Monthly Update</FieldLabel>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <input
@@ -229,10 +233,10 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
             value={newMonth}
             onChange={(e) => setNewMonth(e.target.value)}
             style={{
-              background: "#0f172a",
-              border: "1px solid #334155",
+              background: colors.surface,
+              border: `1px solid ${colors.borderInput}`,
               borderRadius: 8,
-              color: "#94a3b8",
+              color: colors.textMuted3,
               fontSize: 13,
               padding: "7px 10px",
               outline: "none",
@@ -247,10 +251,10 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
               if (e.key === "Enter") handleAddEntry();
             }}
             style={{
-              background: "#0f172a",
-              border: "1px solid #334155",
+              background: colors.surface,
+              border: `1px solid ${colors.borderInput}`,
               borderRadius: 8,
-              color: "#f1f5f9",
+              color: colors.text,
               fontSize: 14,
               padding: "7px 12px",
               flex: 1,
@@ -261,7 +265,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
           <button
             onClick={handleAddEntry}
             style={{
-              background: "#3b82f6",
+              background: colors.accent,
               border: "none",
               borderRadius: 8,
               color: "#fff",
@@ -280,7 +284,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
         <div style={{ marginTop: 12 }}>
           <button
             onClick={() => setShowHistory((h) => !h)}
-            style={{ background: "none", border: "none", color: "#3b82f6", fontSize: 12, cursor: "pointer", padding: 0 }}
+            style={{ background: "none", border: "none", color: colors.accent, fontSize: 12, cursor: "pointer", padding: 0 }}
           >
             {showHistory ? "▲ Hide history" : `▼ Show history (${entries.length} entries)`}
           </button>
@@ -303,25 +307,25 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
                       alignItems: "center",
                       justifyContent: "space-between",
                       padding: "6px 10px",
-                      background: "#0f172a",
+                      background: colors.surface,
                       borderRadius: 8,
                       fontSize: 13,
                     }}
                   >
-                    <span style={{ color: "#64748b" }}>
+                    <span style={{ color: colors.textMuted }}>
                       {new Date(`${entry.month}-01`).toLocaleDateString("en-US", {
                         month: "short",
                         year: "numeric",
                       })}
                     </span>
-                    <span style={{ color: "#f1f5f9", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
+                    <span style={{ color: colors.text, fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                       {formatCurrency(entry.balance)}
                     </span>
                     <ChangeChip value={changePct} />
                     <button
                       onClick={() => onDeleteEntry(entry.id)}
                       title="Delete entry"
-                      style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", fontSize: 15, marginLeft: 4 }}
+                      style={{ background: "none", border: "none", color: colors.textMuted2, cursor: "pointer", fontSize: 15, marginLeft: 4 }}
                     >
                       ×
                     </button>
@@ -337,22 +341,25 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
 }
 
 function FieldLabel({ children }: { children: ReactNode }) {
+  const { colors } = useTheme();
   return (
-    <div style={{ fontSize: 11, color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>
+    <div style={{ fontSize: 11, color: colors.textMuted2, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>
       {children}
     </div>
   );
 }
 
-const fieldInputStyle: CSSProperties = {
-  background: "#1e293b",
-  border: "1px solid #334155",
-  borderRadius: 8,
-  color: "#f1f5f9",
-  fontSize: 16,
-  fontWeight: 600,
-  padding: "8px 12px",
-  width: "100%",
-  boxSizing: "border-box",
-  outline: "none",
-};
+function getFieldInputStyle(colors: Palette): CSSProperties {
+  return {
+    background: colors.surfaceAlt,
+    border: `1px solid ${colors.borderInput}`,
+    borderRadius: 8,
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: 600,
+    padding: "8px 12px",
+    width: "100%",
+    boxSizing: "border-box",
+    outline: "none",
+  };
+}
