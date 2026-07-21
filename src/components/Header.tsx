@@ -1,4 +1,5 @@
 import type { Session } from "@supabase/supabase-js";
+import { NavLink } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 interface HeaderProps {
@@ -6,6 +7,16 @@ interface HeaderProps {
   onLogin: () => void;
   onSignup: () => void;
 }
+
+const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
+  fontSize: 13,
+  fontWeight: 600 as const,
+  color: isActive ? "#f1f5f9" : "#64748b",
+  textDecoration: "none",
+  padding: "6px 10px",
+  borderRadius: 6,
+  background: isActive ? "#1e293b" : "transparent",
+});
 
 export function Header({ session, onLogin, onSignup }: HeaderProps) {
   return (
@@ -23,10 +34,20 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
         borderBottom: "1px solid #1e293b",
       }}
     >
-      <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
         <span style={{ fontSize: 16, fontWeight: 800, color: "#f1f5f9", letterSpacing: "-0.02em" }}>
           Debt Tracker
         </span>
+        {session && (
+          <nav style={{ display: "flex", gap: 4 }}>
+            <NavLink to="/" end style={navLinkStyle}>
+              Debts
+            </NavLink>
+            <NavLink to="/bills" style={navLinkStyle}>
+              Bills
+            </NavLink>
+          </nav>
+        )}
       </div>
 
       {session ? (

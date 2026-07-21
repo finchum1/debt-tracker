@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import { useAccounts } from "./hooks/useAccounts";
 import { Header } from "./components/Header";
 import { AuthModal } from "./components/AuthModal";
 import { GroupSection } from "./components/GroupSection";
 import { ChangeChip } from "./components/ChangeChip";
+import BillTracker from "./components/BillTracker.jsx";
 import { GROUPS, GROUP_COLORS } from "./types";
 import { formatCurrency, getCurrentBalance, pct } from "./lib/debt";
 
@@ -293,7 +295,15 @@ function App() {
   return (
     <div style={{ minHeight: "100vh", background: "#020817" }}>
       <Header session={session} onLogin={() => setAuthModal("signin")} onSignup={() => setAuthModal("signup")} />
-      {session ? <Dashboard userId={session.user.id} /> : <Landing onGetStarted={() => setAuthModal("signup")} />}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            session ? <Dashboard userId={session.user.id} /> : <Landing onGetStarted={() => setAuthModal("signup")} />
+          }
+        />
+        <Route path="/bills" element={session ? <BillTracker /> : <Navigate to="/" replace />} />
+      </Routes>
       {authModal && <AuthModal initialMode={authModal} onClose={() => setAuthModal(null)} />}
     </div>
   );
