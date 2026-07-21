@@ -11,15 +11,19 @@ const MONTH_NAMES = [
 const MONTH_ABBR = MONTH_NAMES.map((m) => m.slice(0, 3));
 const WEEKDAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const INK = '#22303F';
-const PAPER = '#FBF8F2';
-const LINE = '#D8D2C4';
-const MUTED = '#6B6357';
-const SAGE = '#4F7863';
-const AMBER = '#B9812F';
-const RUST = '#B24C32';
-const MONO = "'IBM Plex Mono', monospace";
-const SERIF = "'Fraunces', serif";
+// Palette matches the rest of the app (see src/types.ts GROUP_COLORS / CardPanel.tsx)
+// so this page reads as part of the same product instead of a separate design.
+const INK = '#f1f5f9';       // primary text (light, on the app's dark canvas)
+const PAPER = '#020817';     // page background
+const SURFACE = '#1e293b';   // input/textarea surfaces
+const ACCENT = '#3b82f6';    // primary buttons / active tab state
+const LINE = '#334155';      // borders/dividers
+const MUTED = '#64748b';     // secondary/muted text
+const SAGE = '#22c55e';      // positive / cleared / paid off
+const AMBER = '#f59e0b';     // paid, pending bank clearance
+const RUST = '#ef4444';      // overdue
+const MONO = "'Inter', 'SF Pro Display', -apple-system, sans-serif";
+const SERIF = "'Inter', 'SF Pro Display', -apple-system, sans-serif";
 
 function daysInMonth(year, month) {
   return new Date(year, month + 1, 0).getDate();
@@ -115,7 +119,7 @@ function StampCheck({ checked, onClick, color, label, size = 30 }) {
         borderRadius: size > 20 ? 6 : 4,
         border: `1.5px solid ${checked ? color : LINE}`,
         background: checked ? color : 'transparent',
-        color: checked ? PAPER : 'transparent',
+        color: checked ? INK : 'transparent',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -397,7 +401,7 @@ export default function BillTracker() {
 
   if (!loaded) {
     return (
-      <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", color: MUTED, padding: '3rem 1rem', textAlign: 'center' }}>
+      <div style={{ fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif", color: MUTED, padding: '3rem 1rem', textAlign: 'center' }}>
         Loading your bills…
       </div>
     );
@@ -507,7 +511,7 @@ export default function BillTracker() {
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             onKeyDown={(e) => { if (e.key === 'Enter') addBill(); }}
-            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: PAPER, color: INK, boxSizing: 'border-box' }}
+            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: SURFACE, color: INK, boxSizing: 'border-box' }}
           />
         </div>
         <div style={{ flex: '1 1 100px' }}>
@@ -520,7 +524,7 @@ export default function BillTracker() {
             value={form.amount}
             onChange={(e) => setForm({ ...form, amount: e.target.value })}
             onKeyDown={(e) => { if (e.key === 'Enter') addBill(); }}
-            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: PAPER, color: INK, boxSizing: 'border-box' }}
+            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: SURFACE, color: INK, boxSizing: 'border-box' }}
           />
         </div>
         <div style={{ flex: '1 1 110px' }}>
@@ -533,11 +537,11 @@ export default function BillTracker() {
             value={form.dueDay}
             onChange={(e) => setForm({ ...form, dueDay: e.target.value })}
             onKeyDown={(e) => { if (e.key === 'Enter') addBill(); }}
-            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: PAPER, color: INK, boxSizing: 'border-box' }}
+            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: SURFACE, color: INK, boxSizing: 'border-box' }}
           />
         </div>
       </div>
-      <button type="button" onClick={addBill} style={{ background: INK, color: PAPER, border: 'none', borderRadius: 6, padding: '9px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>
+      <button type="button" onClick={addBill} style={{ background: ACCENT, color: INK, border: 'none', borderRadius: 6, padding: '9px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>
         Add bill
       </button>
       {formError && (
@@ -550,9 +554,7 @@ export default function BillTracker() {
   );
 
   return (
-    <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", background: PAPER, color: INK, minHeight: '100vh', padding: '2.5rem 1.25rem' }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');`}</style>
-
+    <div style={{ fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif", background: PAPER, color: INK, minHeight: '100vh', padding: '2.5rem 1.25rem' }}>
       <div className="mx-auto" style={{ maxWidth: 640 }}>
 
         {view === 'week' ? (
@@ -594,9 +596,9 @@ export default function BillTracker() {
                 fontFamily: MONO,
                 padding: '6px 16px',
                 borderRadius: 999,
-                border: `1px solid ${view === v ? INK : LINE}`,
-                background: view === v ? INK : 'transparent',
-                color: view === v ? PAPER : MUTED,
+                border: `1px solid ${view === v ? ACCENT : LINE}`,
+                background: view === v ? ACCENT : 'transparent',
+                color: view === v ? INK : MUTED,
                 cursor: 'pointer',
                 textTransform: 'capitalize'
               }}
@@ -796,7 +798,7 @@ export default function BillTracker() {
                             value={expenseForm.name}
                             onChange={(e) => setExpenseForm({ ...expenseForm, name: e.target.value })}
                             onKeyDown={(e) => { if (e.key === 'Enter') addExpense(); }}
-                            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: PAPER, color: INK, boxSizing: 'border-box' }}
+                            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: SURFACE, color: INK, boxSizing: 'border-box' }}
                           />
                         </div>
                         <div style={{ flex: '1 1 100px' }}>
@@ -809,7 +811,7 @@ export default function BillTracker() {
                             value={expenseForm.amount}
                             onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
                             onKeyDown={(e) => { if (e.key === 'Enter') addExpense(); }}
-                            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: PAPER, color: INK, boxSizing: 'border-box' }}
+                            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: SURFACE, color: INK, boxSizing: 'border-box' }}
                           />
                         </div>
                         <div style={{ flex: '1 1 110px' }}>
@@ -822,11 +824,11 @@ export default function BillTracker() {
                             value={expenseForm.dueDay}
                             onChange={(e) => setExpenseForm({ ...expenseForm, dueDay: e.target.value })}
                             onKeyDown={(e) => { if (e.key === 'Enter') addExpense(); }}
-                            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: PAPER, color: INK, boxSizing: 'border-box' }}
+                            style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: SURFACE, color: INK, boxSizing: 'border-box' }}
                           />
                         </div>
                       </div>
-                      <button type="button" onClick={addExpense} style={{ background: INK, color: PAPER, border: 'none', borderRadius: 6, padding: '9px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>
+                      <button type="button" onClick={addExpense} style={{ background: ACCENT, color: INK, border: 'none', borderRadius: 6, padding: '9px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>
                         Add expense
                       </button>
                       {expenseFormError && (
@@ -863,7 +865,7 @@ export default function BillTracker() {
                       display: 'flex',
                       flexDirection: 'column',
                       gap: 3,
-                      background: cell.isToday ? 'rgba(79,120,99,0.07)' : 'transparent'
+                      background: cell.isToday ? 'rgba(34,197,94,0.08)' : 'transparent'
                     }}
                   >
                     <div style={{ fontFamily: MONO, fontSize: 11, fontWeight: cell.isToday ? 600 : 500, color: INK }}>{cell.day}</div>
@@ -1035,7 +1037,7 @@ export default function BillTracker() {
                     padding: '10px 12px',
                     fontSize: '0.9rem',
                     fontFamily: MONO,
-                    background: PAPER,
+                    background: SURFACE,
                     color: INK,
                     resize: 'vertical',
                     boxSizing: 'border-box'
@@ -1070,7 +1072,7 @@ export default function BillTracker() {
                   </div>
                 )}
                 <div className="flex justify-between items-baseline" style={{ marginTop: 8, paddingTop: 10, borderTop: `1px solid ${LINE}` }}>
-                  <span style={{ fontSize: '0.9rem', color: INK, fontFamily: "'IBM Plex Sans', sans-serif" }}>remaining to pay this week</span>
+                  <span style={{ fontSize: '0.9rem', color: INK, fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif" }}>remaining to pay this week</span>
                   <span style={{ fontSize: '1.4rem', fontWeight: 600, color: weekRemaining > 0 ? RUST : SAGE }}>${fmt(weekRemaining)}</span>
                 </div>
               </>
@@ -1087,7 +1089,7 @@ export default function BillTracker() {
                   </div>
                 )}
                 <div className="flex justify-between items-baseline" style={{ marginTop: 8, paddingTop: 10, borderTop: `1px solid ${LINE}` }}>
-                  <span style={{ fontSize: '0.9rem', color: INK, fontFamily: "'IBM Plex Sans', sans-serif" }}>remaining to pay</span>
+                  <span style={{ fontSize: '0.9rem', color: INK, fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif" }}>remaining to pay</span>
                   <span style={{ fontSize: '1.4rem', fontWeight: 600, color: remaining > 0 ? RUST : SAGE }}>${fmt(remaining)}</span>
                 </div>
               </>
