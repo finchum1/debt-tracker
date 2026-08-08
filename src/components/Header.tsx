@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { NavLink } from "react-router-dom";
 import { Moon, Sun } from "lucide-react";
@@ -21,7 +22,13 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
     padding: "6px 10px",
     borderRadius: 6,
     background: isActive ? colors.surfaceAlt : "transparent",
+    transition: "background 0.15s ease, color 0.15s ease",
   });
+
+  function navLinkHover(e: MouseEvent<HTMLAnchorElement>, entering: boolean) {
+    if (e.currentTarget.getAttribute("aria-current") === "page") return;
+    e.currentTarget.style.background = entering ? colors.surfaceAlt : "transparent";
+  }
 
   return (
     <header
@@ -44,10 +51,21 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
         </span>
         {session && (
           <nav style={{ display: "flex", gap: 4 }}>
-            <NavLink to="/" end style={navLinkStyle}>
+            <NavLink
+              to="/"
+              end
+              style={navLinkStyle}
+              onMouseEnter={(e) => navLinkHover(e, true)}
+              onMouseLeave={(e) => navLinkHover(e, false)}
+            >
               Debts
             </NavLink>
-            <NavLink to="/bills" style={navLinkStyle}>
+            <NavLink
+              to="/bills"
+              style={navLinkStyle}
+              onMouseEnter={(e) => navLinkHover(e, true)}
+              onMouseLeave={(e) => navLinkHover(e, false)}
+            >
               Bills
             </NavLink>
           </nav>
@@ -59,6 +77,7 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
           onClick={toggleTheme}
           title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          className="transition-colors duration-150 active:scale-[0.94]"
           style={{
             background: "none",
             border: `1px solid ${colors.border}`,
@@ -71,6 +90,14 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
             justifyContent: "center",
             cursor: "pointer",
           }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = colors.surfaceAlt;
+            e.currentTarget.style.color = colors.text;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "none";
+            e.currentTarget.style.color = colors.textMuted3;
+          }}
         >
           {mode === "dark" ? <Sun size={16} /> : <Moon size={16} />}
         </button>
@@ -80,6 +107,7 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
             <span style={{ fontSize: 13, color: colors.textMuted }}>{session.user.email}</span>
             <button
               onClick={() => supabase.auth.signOut()}
+              className="transition-colors duration-150 active:scale-[0.97]"
               style={{
                 background: "none",
                 border: `1px solid ${colors.border}`,
@@ -89,6 +117,8 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
                 padding: "7px 14px",
                 cursor: "pointer",
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = colors.surfaceAlt)}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
             >
               Sign out
             </button>
@@ -97,6 +127,7 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
           <>
             <button
               onClick={onLogin}
+              className="transition-colors duration-150 active:scale-[0.97]"
               style={{
                 background: "none",
                 border: `1px solid ${colors.border}`,
@@ -107,11 +138,14 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
                 padding: "8px 16px",
                 cursor: "pointer",
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = colors.surfaceAlt)}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
             >
               Log in
             </button>
             <button
               onClick={onSignup}
+              className="transition-transform duration-150 hover:brightness-110 active:scale-[0.97]"
               style={{
                 background: colors.accent,
                 border: "none",

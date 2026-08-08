@@ -14,8 +14,8 @@ const WEEKDAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 // Fonts match the rest of the app; colors come from useTheme() (see below) so this
 // page follows the same light/dark toggle instead of having its own separate palette.
-const MONO = "'Inter', 'SF Pro Display', -apple-system, sans-serif";
-const SERIF = "'Inter', 'SF Pro Display', -apple-system, sans-serif";
+const MONO = "'Outfit', -apple-system, sans-serif";
+const SERIF = "'Outfit', -apple-system, sans-serif";
 
 function daysInMonth(year, month) {
   return new Date(year, month + 1, 0).getDate();
@@ -488,8 +488,9 @@ export default function BillTracker() {
 
   if (!loaded) {
     return (
-      <div style={{ fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif", color: MUTED, padding: '3rem 1rem', textAlign: 'center' }}>
-        Loading your bills…
+      <div style={{ fontFamily: "'Outfit', -apple-system, sans-serif", color: MUTED, padding: '3rem 1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+        <div className="spinner" />
+        <span style={{ fontSize: 13 }}>Loading your bills…</span>
       </div>
     );
   }
@@ -563,6 +564,7 @@ export default function BillTracker() {
   const addBillBlock = !showForm ? (
     <button
       onClick={() => setShowForm(true)}
+      className="transition-colors duration-150 active:scale-[0.98]"
       style={{
         marginTop: '1.5rem',
         display: 'flex',
@@ -578,6 +580,8 @@ export default function BillTracker() {
         width: '100%',
         justifyContent: 'center'
       }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = ACCENT; e.currentTarget.style.color = ACCENT; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = LINE; e.currentTarget.style.color = MUTED; }}
     >
       <Plus size={15} /> Add a bill
     </button>
@@ -639,7 +643,7 @@ export default function BillTracker() {
           style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: SURFACE, color: INK, boxSizing: 'border-box' }}
         />
       </div>
-      <button type="button" onClick={addBill} style={{ background: ACCENT, color: INK, border: 'none', borderRadius: 6, padding: '9px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>
+      <button type="button" onClick={addBill} className="transition-transform duration-150 hover:brightness-110 active:scale-[0.96]" style={{ background: ACCENT, color: INK, border: 'none', borderRadius: 6, padding: '9px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>
         Add bill
       </button>
       {formError && (
@@ -652,22 +656,22 @@ export default function BillTracker() {
   );
 
   return (
-    <div style={{ fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif", background: PAPER, color: INK, minHeight: '100vh', padding: '2.5rem 1.25rem' }}>
+    <div style={{ fontFamily: "'Outfit', -apple-system, sans-serif", background: PAPER, color: INK, minHeight: '100vh', padding: '2.5rem 1.25rem' }}>
       <div className="mx-auto" style={{ maxWidth: 640 }}>
 
         {view === 'week' ? (
           <div className="flex items-center justify-between" style={{ marginBottom: '1.25rem' }}>
-            <button onClick={() => changeWeek(-1)} aria-label="Previous week" style={{ padding: 8, borderRadius: 999, border: 'none', background: 'transparent', color: MUTED, cursor: 'pointer' }}>
+            <button onClick={() => changeWeek(-1)} aria-label="Previous week" className="transition-opacity duration-150 hover:opacity-60 active:scale-90" style={{ padding: 8, borderRadius: 999, border: 'none', background: 'transparent', color: MUTED, cursor: 'pointer' }}>
               <ChevronLeft size={22} />
             </button>
             <h1 style={{ fontFamily: SERIF, fontSize: '1.5rem', fontWeight: 600, margin: 0, letterSpacing: '-0.01em' }}>{weekLabel}</h1>
-            <button onClick={() => changeWeek(1)} aria-label="Next week" style={{ padding: 8, borderRadius: 999, border: 'none', background: 'transparent', color: MUTED, cursor: 'pointer' }}>
+            <button onClick={() => changeWeek(1)} aria-label="Next week" className="transition-opacity duration-150 hover:opacity-60 active:scale-90" style={{ padding: 8, borderRadius: 999, border: 'none', background: 'transparent', color: MUTED, cursor: 'pointer' }}>
               <ChevronRight size={22} />
             </button>
           </div>
         ) : (
           <div className="flex items-center justify-between" style={{ marginBottom: '1.25rem' }}>
-            <button onClick={() => changeMonth(-1)} aria-label="Previous month" style={{ padding: 8, borderRadius: 999, border: 'none', background: 'transparent', color: MUTED, cursor: 'pointer' }}>
+            <button onClick={() => changeMonth(-1)} aria-label="Previous month" className="transition-opacity duration-150 hover:opacity-60 active:scale-90" style={{ padding: 8, borderRadius: 999, border: 'none', background: 'transparent', color: MUTED, cursor: 'pointer' }}>
               <ChevronLeft size={22} />
             </button>
             <div className="text-center">
@@ -678,7 +682,7 @@ export default function BillTracker() {
                 <div style={{ fontFamily: MONO, fontSize: '0.7rem', color: SAGE, marginTop: 2 }}>● current month</div>
               )}
             </div>
-            <button onClick={() => changeMonth(1)} aria-label="Next month" style={{ padding: 8, borderRadius: 999, border: 'none', background: 'transparent', color: MUTED, cursor: 'pointer' }}>
+            <button onClick={() => changeMonth(1)} aria-label="Next month" className="transition-opacity duration-150 hover:opacity-60 active:scale-90" style={{ padding: 8, borderRadius: 999, border: 'none', background: 'transparent', color: MUTED, cursor: 'pointer' }}>
               <ChevronRight size={22} />
             </button>
           </div>
@@ -689,6 +693,7 @@ export default function BillTracker() {
             <button
               key={v}
               onClick={() => setView(v)}
+              className="transition-colors duration-150 active:scale-95"
               style={{
                 fontSize: '0.72rem',
                 fontFamily: MONO,
@@ -700,6 +705,8 @@ export default function BillTracker() {
                 cursor: 'pointer',
                 textTransform: 'capitalize'
               }}
+              onMouseEnter={(e) => { if (view !== v) e.currentTarget.style.borderColor = ACCENT; }}
+              onMouseLeave={(e) => { if (view !== v) e.currentTarget.style.borderColor = LINE; }}
             >
               {v}
             </button>
@@ -860,6 +867,7 @@ export default function BillTracker() {
                   {!showExpenseForm ? (
                     <button
                       onClick={() => setShowExpenseForm(true)}
+                      className="transition-colors duration-150 active:scale-[0.98]"
                       style={{
                         marginTop: '1.5rem',
                         display: 'flex',
@@ -875,6 +883,8 @@ export default function BillTracker() {
                         width: '100%',
                         justifyContent: 'center'
                       }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = ACCENT; e.currentTarget.style.color = ACCENT; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = LINE; e.currentTarget.style.color = MUTED; }}
                     >
                       <Plus size={15} /> Add expense
                     </button>
@@ -941,7 +951,7 @@ export default function BillTracker() {
                           style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: SURFACE, color: INK, boxSizing: 'border-box' }}
                         />
                       </div>
-                      <button type="button" onClick={addExpense} style={{ background: ACCENT, color: INK, border: 'none', borderRadius: 6, padding: '9px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>
+                      <button type="button" onClick={addExpense} className="transition-transform duration-150 hover:brightness-110 active:scale-[0.96]" style={{ background: ACCENT, color: INK, border: 'none', borderRadius: 6, padding: '9px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>
                         Add expense
                       </button>
                       {expenseFormError && (
@@ -1188,7 +1198,7 @@ export default function BillTracker() {
                   </div>
                 )}
                 <div className="flex justify-between items-baseline" style={{ marginTop: 8, paddingTop: 10, borderTop: `1px solid ${LINE}` }}>
-                  <span style={{ fontSize: '0.9rem', color: INK, fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif" }}>remaining to pay this week</span>
+                  <span style={{ fontSize: '0.9rem', color: INK, fontFamily: "'Outfit', -apple-system, sans-serif" }}>remaining to pay this week</span>
                   <span style={{ fontSize: '1.4rem', fontWeight: 600, color: weekRemaining > 0 ? RUST : SAGE }}>${fmt(weekRemaining)}</span>
                 </div>
               </>
@@ -1205,7 +1215,7 @@ export default function BillTracker() {
                   </div>
                 )}
                 <div className="flex justify-between items-baseline" style={{ marginTop: 8, paddingTop: 10, borderTop: `1px solid ${LINE}` }}>
-                  <span style={{ fontSize: '0.9rem', color: INK, fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif" }}>remaining to pay</span>
+                  <span style={{ fontSize: '0.9rem', color: INK, fontFamily: "'Outfit', -apple-system, sans-serif" }}>remaining to pay</span>
                   <span style={{ fontSize: '1.4rem', fontWeight: 600, color: remaining > 0 ? RUST : SAGE }}>${fmt(remaining)}</span>
                 </div>
               </>

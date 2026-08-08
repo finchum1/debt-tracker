@@ -46,7 +46,7 @@ export function GroupSection({
   if (accounts.length === 0) return null;
 
   return (
-    <div style={{ marginBottom: 28 }}>
+    <section aria-label={`${group} accounts`} style={{ marginBottom: 28 }}>
       <div
         onClick={() => setCollapsed((c) => !c)}
         style={{
@@ -97,6 +97,7 @@ export function GroupSection({
           ))}
           <button
             onClick={() => onAddAccount(group)}
+            className="transition-colors duration-150 active:scale-[0.98]"
             style={{
               background: "none",
               border: `2px dashed ${color}40`,
@@ -107,11 +108,13 @@ export function GroupSection({
               cursor: "pointer",
               minHeight: 100,
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = `${color}80`)}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = `${color}40`)}
           >
             + Add {group} Account
           </button>
         </div>
       )}
-    </div>
+    </section>
   );
 }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Link, Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import { useAccounts } from "./hooks/useAccounts";
 import { useTheme } from "./hooks/useTheme";
@@ -56,12 +56,15 @@ function Dashboard({ userId }: { userId: string }) {
           background: colors.bg,
           color: colors.textMuted,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif",
+          gap: 12,
+          fontFamily: "'Outfit', -apple-system, sans-serif",
         }}
       >
-        Loading…
+        <div className="spinner" />
+        <span style={{ fontSize: 13 }}>Loading your accounts…</span>
       </div>
     );
   }
@@ -89,7 +92,7 @@ function Dashboard({ userId }: { userId: string }) {
       style={{
         minHeight: "100vh",
         background: colors.bg,
-        fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif",
+        fontFamily: "'Outfit', -apple-system, sans-serif",
         color: colors.text,
         padding: "0 0 60px",
       }}
@@ -207,6 +210,7 @@ function Dashboard({ userId }: { userId: string }) {
               <button
                 key={g}
                 onClick={() => addAccount(g)}
+                className="transition-colors duration-150 active:scale-[0.97]"
                 style={{
                   background: "none",
                   border: `2px dashed ${GROUP_COLORS[g]}40`,
@@ -217,6 +221,8 @@ function Dashboard({ userId }: { userId: string }) {
                   cursor: "pointer",
                   padding: "10px 16px",
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = `${GROUP_COLORS[g]}80`)}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = `${GROUP_COLORS[g]}40`)}
               >
                 + Start {g} group
               </button>
@@ -229,21 +235,32 @@ function Dashboard({ userId }: { userId: string }) {
 }
 
 function Landing({ onGetStarted }: { onGetStarted: () => void }) {
-  const { colors } = useTheme();
+  const { colors, mode } = useTheme();
   return (
     <div
       style={{
+        position: "relative",
         minHeight: "calc(100vh - 61px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif",
+        fontFamily: "'Outfit', -apple-system, sans-serif",
         color: colors.text,
         padding: 24,
         textAlign: "center",
+        overflow: "hidden",
       }}
     >
-      <div style={{ maxWidth: 480 }}>
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `radial-gradient(600px circle at 50% 35%, ${colors.accent}${mode === "dark" ? "26" : "14"}, transparent 70%)`,
+          pointerEvents: "none",
+        }}
+      />
+      <div style={{ maxWidth: 480, position: "relative" }}>
         <div style={{ fontSize: 11, color: colors.accent, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 10 }}>
           Debt Tracker
         </div>
@@ -256,6 +273,7 @@ function Landing({ onGetStarted }: { onGetStarted: () => void }) {
         </p>
         <button
           onClick={onGetStarted}
+          className="transition-transform duration-150 hover:brightness-110 active:scale-[0.97]"
           style={{
             background: colors.accent,
             border: "none",
@@ -274,6 +292,47 @@ function Landing({ onGetStarted }: { onGetStarted: () => void }) {
   );
 }
 
+function NotFound() {
+  const { colors } = useTheme();
+  return (
+    <div
+      style={{
+        minHeight: "calc(100vh - 61px)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        color: colors.text,
+        padding: 24,
+        textAlign: "center",
+      }}
+    >
+      <div style={{ fontSize: 13, color: colors.accent, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 10 }}>
+        404
+      </div>
+      <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 10px" }}>Page not found</h1>
+      <p style={{ color: colors.textMuted2, fontSize: 14, margin: "0 0 24px" }}>
+        That page doesn't exist. Head back to your dashboard.
+      </p>
+      <Link
+        to="/"
+        className="transition-transform duration-150 hover:brightness-110 active:scale-[0.97]"
+        style={{
+          background: colors.accent,
+          color: "#fff",
+          fontWeight: 700,
+          fontSize: 14,
+          padding: "10px 20px",
+          borderRadius: 8,
+          textDecoration: "none",
+        }}
+      >
+        Back to Debt Tracker
+      </Link>
+    </div>
+  );
+}
+
 function App() {
   const { colors } = useTheme();
   const { session, loading } = useAuth();
@@ -287,27 +346,37 @@ function App() {
           background: colors.bg,
           color: colors.textMuted,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          gap: 12,
+          fontFamily: "'Outfit', -apple-system, sans-serif",
         }}
       >
-        Loading…
+        <div className="spinner" />
+        <span style={{ fontSize: 13 }}>Loading…</span>
       </div>
     );
   }
 
   return (
     <div style={{ minHeight: "100vh", background: colors.bg }}>
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
       <Header session={session} onLogin={() => setAuthModal("signin")} onSignup={() => setAuthModal("signup")} />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            session ? <Dashboard userId={session.user.id} /> : <Landing onGetStarted={() => setAuthModal("signup")} />
-          }
-        />
-        <Route path="/bills" element={session ? <BillTracker /> : <Navigate to="/" replace />} />
-      </Routes>
+      <main id="main-content">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              session ? <Dashboard userId={session.user.id} /> : <Landing onGetStarted={() => setAuthModal("signup")} />
+            }
+          />
+          <Route path="/bills" element={session ? <BillTracker /> : <Navigate to="/" replace />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
       {authModal && <AuthModal initialMode={authModal} onClose={() => setAuthModal(null)} />}
     </div>
   );

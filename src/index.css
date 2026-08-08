@@ -7,8 +7,79 @@
 body {
   margin: 0;
   background: #020817;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 #root {
   min-height: 100vh;
+}
+
+h1, h2 {
+  text-wrap: balance;
+}
+
+/* Consistent keyboard-focus ring everywhere, regardless of light/dark theme
+   or which element it lands on — buttons, links, inputs, selects all rely on
+   this instead of ad-hoc per-component styling. */
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 12px;
+  z-index: 100;
+  background: #3b82f6;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-panel-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-backdrop {
+  animation: modal-backdrop-in 0.18s ease-out;
+}
+
+.modal-panel {
+  animation: modal-panel-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop, .modal-panel {
+    animation: none;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.6;
+  animation: spin 0.7s linear infinite;
 }

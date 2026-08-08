@@ -60,6 +60,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
 
   return (
     <div
+      className="transition-shadow duration-200"
       style={{
         background: colors.surface,
         border: `1px solid ${colors.border}`,
@@ -68,7 +69,10 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
         padding: "20px 24px 20px",
         display: "flex",
         flexDirection: "column",
+        boxShadow: colors.shadow,
       }}
+      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = colors.shadowHover)}
+      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = colors.shadow)}
     >
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
         <div>
@@ -98,6 +102,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
                 setNameInput(account.name);
                 setEditingName(true);
               }}
+              className="transition-opacity duration-150 hover:opacity-80"
               style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "block" }}
             >
               <span style={{ color: colors.text, fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em" }}>
@@ -135,7 +140,10 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
         <button
           onClick={() => onDelete(account.id)}
           title="Remove account"
+          className="transition-colors duration-150 active:scale-90"
           style={{ background: "none", border: "none", color: colors.textMuted2, cursor: "pointer", fontSize: 18, lineHeight: 1 }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = colors.red)}
+          onMouseLeave={(e) => (e.currentTarget.style.color = colors.textMuted2)}
         >
           ×
         </button>
@@ -264,6 +272,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
           />
           <button
             onClick={handleAddEntry}
+            className="transition-transform duration-150 hover:brightness-110 active:scale-[0.96]"
             style={{
               background: colors.accent,
               border: "none",
@@ -284,6 +293,7 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
         <div style={{ marginTop: 12 }}>
           <button
             onClick={() => setShowHistory((h) => !h)}
+            className="transition-opacity duration-150 hover:opacity-75"
             style={{ background: "none", border: "none", color: colors.accent, fontSize: 12, cursor: "pointer", padding: 0 }}
           >
             {showHistory ? "▲ Hide history" : `▼ Show history (${entries.length} entries)`}
@@ -325,7 +335,10 @@ export function CardPanel({ account, onUpdate, onDelete, onAddEntry, onDeleteEnt
                     <button
                       onClick={() => onDeleteEntry(entry.id)}
                       title="Delete entry"
+                      className="transition-colors duration-150 active:scale-90"
                       style={{ background: "none", border: "none", color: colors.textMuted2, cursor: "pointer", fontSize: 15, marginLeft: 4 }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = colors.red)}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = colors.textMuted2)}
                     >
                       ×
                     </button>

@@ -79,11 +79,13 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
     fontSize: 13,
     cursor: "pointer" as const,
     padding: 0,
+    textUnderlineOffset: "3px",
   };
 
   return (
     <div
       onClick={onClose}
+      className="modal-backdrop"
       style={{
         position: "fixed",
         inset: 0,
@@ -98,6 +100,7 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
       <form
         onClick={(e) => e.stopPropagation()}
         onSubmit={handleSubmit}
+        className="modal-panel"
         style={{
           width: "100%",
           maxWidth: 360,
@@ -109,12 +112,14 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
           flexDirection: "column",
           gap: 14,
           position: "relative",
+          boxShadow: colors.shadowHover,
         }}
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
+          className="transition-colors duration-150 active:scale-90"
           style={{
             position: "absolute",
             top: 14,
@@ -126,6 +131,8 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
             cursor: "pointer",
             lineHeight: 1,
           }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = colors.text)}
+          onMouseLeave={(e) => (e.currentTarget.style.color = colors.textMuted2)}
         >
           ×
         </button>
@@ -174,6 +181,7 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
         <button
           type="submit"
           disabled={submitting}
+          className={submitting ? "" : "transition-transform duration-150 hover:brightness-110 active:scale-[0.97]"}
           style={{
             marginTop: 8,
             background: colors.accent,
@@ -194,14 +202,14 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
           {mode === "signin" ? (
             <>
               Don't have an account?{" "}
-              <button type="button" onClick={() => switchMode("signup")} style={linkStyle}>
+              <button type="button" onClick={() => switchMode("signup")} className="hover:underline" style={linkStyle}>
                 Sign up
               </button>
             </>
           ) : (
             <>
               Already have an account?{" "}
-              <button type="button" onClick={() => switchMode("signin")} style={linkStyle}>
+              <button type="button" onClick={() => switchMode("signin")} className="hover:underline" style={linkStyle}>
                 Sign in
               </button>
             </>

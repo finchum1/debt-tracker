@@ -20,6 +20,8 @@ export interface Palette {
   redSoft: string;
   sky: string;
   amber: string;
+  shadow: string;
+  shadowHover: string;
 }
 
 const DARK: Palette = {
@@ -39,6 +41,8 @@ const DARK: Palette = {
   redSoft: "#fca5a5",
   sky: "#38bdf8",
   amber: "#f59e0b",
+  shadow: "0 1px 2px rgba(2, 8, 23, 0.4)",
+  shadowHover: "0 12px 28px -8px rgba(2, 8, 23, 0.6), 0 2px 8px rgba(2, 8, 23, 0.4)",
 };
 
 const LIGHT: Palette = {
@@ -58,6 +62,8 @@ const LIGHT: Palette = {
   redSoft: "#dc2626",
   sky: "#0284c7",
   amber: "#d97706",
+  shadow: "0 1px 2px rgba(15, 23, 42, 0.04)",
+  shadowHover: "0 12px 24px -8px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06)",
 };
 
 interface ThemeContextValue {
