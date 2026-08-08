@@ -47,7 +47,7 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
     >
       <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
         <span style={{ fontSize: 16, fontWeight: 800, color: colors.text, letterSpacing: "-0.02em" }}>
-          Debt Tracker
+          Oaksteadly
         </span>
         {session && (
           <nav style={{ display: "flex", gap: 4 }}>

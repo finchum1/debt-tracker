@@ -138,7 +138,7 @@ export function AuthModal({ initialMode, onClose }: AuthModalProps) {
         </button>
 
         <div style={{ fontSize: 11, color: colors.accent, textTransform: "uppercase", letterSpacing: "0.12em" }}>
-          Debt Tracker
+          Oaksteadly
         </div>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: "0 0 4px", letterSpacing: "-0.02em", color: colors.text }}>
           {mode === "signin" ? "Sign in" : "Create your account"}

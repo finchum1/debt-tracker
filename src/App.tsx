@@ -109,7 +109,7 @@ function Dashboard({ userId }: { userId: string }) {
       >
         <div>
           <div style={{ fontSize: 11, color: colors.accent, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 6 }}>
-            Debt Tracker
+            Oaksteadly
           </div>
           <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.03em", margin: 0, marginBottom: 4 }}>
             Total Debt Dashboard
@@ -263,14 +263,14 @@ function Landing({ onGetStarted }: { onGetStarted: () => void }) {
       />
       <div style={{ maxWidth: 480, position: "relative" }}>
         <div style={{ fontSize: 11, color: colors.accent, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 10 }}>
-          Debt Tracker
+          Oaksteadly
         </div>
         <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>
-          Track your debt payoff, from anywhere
+          Debt, bills, and goals — from anywhere
         </h1>
         <p style={{ color: colors.textMuted2, fontSize: 15, margin: "0 0 28px" }}>
-          Group balances by Credit Card, Real Estate, Autos, and Other. Watch APR, monthly payments, and
-          progress toward payoff — synced across every device.
+          Track debt payoff by category, stay on top of monthly bills, and set fresh goals for
+          Faith, Family, Friends, and more — synced across every device.
         </p>
         <button
           onClick={onGetStarted}
@@ -328,7 +328,7 @@ function NotFound() {
           textDecoration: "none",
         }}
       >
-        Back to Debt Tracker
+        Back to Oaksteadly
       </Link>
     </div>
   );
