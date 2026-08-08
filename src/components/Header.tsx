@@ -68,6 +68,14 @@ export function Header({ session, onLogin, onSignup }: HeaderProps) {
             >
               Bills
             </NavLink>
+            <NavLink
+              to="/goals"
+              style={navLinkStyle}
+              onMouseEnter={(e) => navLinkHover(e, true)}
+              onMouseLeave={(e) => navLinkHover(e, false)}
+            >
+              Goals
+            </NavLink>
           </nav>
         )}
       </div>
