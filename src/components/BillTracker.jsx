@@ -130,9 +130,79 @@ function StampCheck({ checked, onClick, color, label, size = 30 }) {
   );
 }
 
-function ListRow({ bill, status, displayDay, overdue, dimmed, onTogglePaid, onToggleCleared, onDelete }) {
+function BillNoteField({ bill, onUpdateNote }) {
+  const { colors } = useTheme();
+  const { border: LINE, textMuted: MUTED } = colors;
+  const [editingNote, setEditingNote] = useState(false);
+  const [noteDraft, setNoteDraft] = useState(bill.note || '');
+
+  if (!onUpdateNote) return null;
+
+  function saveNote() {
+    setEditingNote(false);
+    const trimmed = noteDraft.trim();
+    if (trimmed !== (bill.note || '')) onUpdateNote(trimmed);
+  }
+
+  if (editingNote) {
+    return (
+      <input
+        autoFocus
+        value={noteDraft}
+        onChange={(e) => setNoteDraft(e.target.value)}
+        onBlur={saveNote}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') { e.preventDefault(); saveNote(); }
+          if (e.key === 'Escape') { setNoteDraft(bill.note || ''); setEditingNote(false); }
+        }}
+        onClick={(e) => e.stopPropagation()}
+        placeholder="e.g. Autopay from Checking"
+        style={{
+          display: 'block',
+          marginTop: 3,
+          width: '90%',
+          fontSize: '0.75rem',
+          fontFamily: MONO,
+          color: MUTED,
+          background: 'transparent',
+          border: `1px solid ${LINE}`,
+          borderRadius: 4,
+          padding: '2px 6px',
+          boxSizing: 'border-box'
+        }}
+      />
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => { setNoteDraft(bill.note || ''); setEditingNote(true); }}
+      className={bill.note ? '' : 'opacity-0 group-hover:opacity-100'}
+      style={{
+        display: 'block',
+        marginTop: 3,
+        background: 'none',
+        border: 'none',
+        padding: 0,
+        cursor: 'pointer',
+        textAlign: 'left',
+        fontSize: '0.75rem',
+        fontFamily: MONO,
+        color: MUTED,
+        fontStyle: bill.note ? 'normal' : 'italic',
+        transition: 'opacity 0.15s'
+      }}
+    >
+      {bill.note || '+ add note'}
+    </button>
+  );
+}
+
+function ListRow({ bill, status, displayDay, overdue, dimmed, onTogglePaid, onToggleCleared, onDelete, onUpdateNote }) {
   const { colors } = useTheme();
   const { text: INK, border: LINE, textMuted: MUTED, red: RUST, amber: AMBER, green: SAGE } = colors;
+
   return (
     <div className="group flex items-center" style={{ padding: '10px 0', borderBottom: `1px solid ${LINE}`, opacity: dimmed ? 0.55 : 1 }}>
       <div style={{ width: 40, fontFamily: MONO, fontSize: '0.85rem', fontWeight: 500, color: overdue ? RUST : INK }}>
@@ -146,6 +216,7 @@ function ListRow({ bill, status, displayDay, overdue, dimmed, onTogglePaid, onTo
           </span>
         )}
         {overdue && !dimmed && <span style={{ fontSize: '0.7rem', color: RUST, marginLeft: 8, fontFamily: MONO }}>past due</span>}
+        <BillNoteField bill={bill} onUpdateNote={onUpdateNote} />
       </div>
       <div style={{ width: 90, textAlign: 'right', fontFamily: MONO, fontSize: '0.9rem', color: dimmed ? MUTED : INK }}>${fmt(bill.amount)}</div>
       <div style={{ width: 30, marginLeft: 16, display: 'flex', justifyContent: 'center' }}>
@@ -217,10 +288,10 @@ export default function BillTracker() {
   const [loaded, setLoaded] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: '', amount: '', dueDay: '1' });
+  const [form, setForm] = useState({ name: '', amount: '', dueDay: '1', note: '' });
   const [formError, setFormError] = useState('');
   const [showExpenseForm, setShowExpenseForm] = useState(false);
-  const [expenseForm, setExpenseForm] = useState({ name: '', amount: '', dueDay: '1' });
+  const [expenseForm, setExpenseForm] = useState({ name: '', amount: '', dueDay: '1', note: '' });
   const [expenseFormError, setExpenseFormError] = useState('');
   const [showDoneExpenses, setShowDoneExpenses] = useState(false);
   const [showDoneList, setShowDoneList] = useState(false);
@@ -289,11 +360,11 @@ export default function BillTracker() {
       setFormError('Enter a bill name and an amount greater than 0.');
       return;
     }
-    const newBill = { id: Date.now().toString(36), name: form.name.trim(), amount, dueDay };
+    const newBill = { id: Date.now().toString(36), name: form.name.trim(), amount, dueDay, note: form.note.trim() };
     const nextBills = [...bills, newBill];
     setBills(nextBills);
     persist(nextBills, statusesByMonth, notesByMonth);
-    setForm({ name: '', amount: '', dueDay: '1' });
+    setForm({ name: '', amount: '', dueDay: '1', note: '' });
     setFormError('');
     setShowForm(false);
   }
@@ -312,18 +383,25 @@ export default function BillTracker() {
       dueDay,
       recurring: false,
       year,
-      month
+      month,
+      note: expenseForm.note.trim()
     };
     const nextBills = [...bills, newExpense];
     setBills(nextBills);
     persist(nextBills, statusesByMonth, notesByMonth);
-    setExpenseForm({ name: '', amount: '', dueDay: '1' });
+    setExpenseForm({ name: '', amount: '', dueDay: '1', note: '' });
     setExpenseFormError('');
     setShowExpenseForm(false);
   }
 
   function deleteBill(id) {
     const nextBills = bills.filter((b) => b.id !== id);
+    setBills(nextBills);
+    persist(nextBills, statusesByMonth, notesByMonth);
+  }
+
+  function updateBillNote(id, note) {
+    const nextBills = bills.map((b) => (b.id === id ? { ...b, note } : b));
     setBills(nextBills);
     persist(nextBills, statusesByMonth, notesByMonth);
   }
@@ -550,6 +628,17 @@ export default function BillTracker() {
           />
         </div>
       </div>
+      <div style={{ marginBottom: 10 }}>
+        <label style={{ display: 'block', fontSize: '0.7rem', color: MUTED, marginBottom: 4 }}>Note (optional)</label>
+        <input
+          type="text"
+          placeholder="e.g. Autopay from Checking"
+          value={form.note}
+          onChange={(e) => setForm({ ...form, note: e.target.value })}
+          onKeyDown={(e) => { if (e.key === 'Enter') addBill(); }}
+          style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: SURFACE, color: INK, boxSizing: 'border-box' }}
+        />
+      </div>
       <button type="button" onClick={addBill} style={{ background: ACCENT, color: INK, border: 'none', borderRadius: 6, padding: '9px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>
         Add bill
       </button>
@@ -662,6 +751,7 @@ export default function BillTracker() {
                                 onTogglePaid={() => toggleStatus(bill.id, 'paid', year, month)}
                                 onToggleCleared={() => toggleStatus(bill.id, 'cleared', year, month)}
                                 onDelete={() => deleteBill(bill.id)}
+                                onUpdateNote={(note) => updateBillNote(bill.id, note)}
                               />
                             );
                           })}
@@ -688,6 +778,7 @@ export default function BillTracker() {
                           onTogglePaid={() => toggleStatus(bill.id, 'paid', year, month)}
                           onToggleCleared={() => toggleStatus(bill.id, 'cleared', year, month)}
                           onDelete={() => deleteBill(bill.id)}
+                          onUpdateNote={(note) => updateBillNote(bill.id, note)}
                         />
                       );
                     })}
@@ -734,6 +825,7 @@ export default function BillTracker() {
                               onTogglePaid={() => toggleStatus(bill.id, 'paid', year, month)}
                               onToggleCleared={() => toggleStatus(bill.id, 'cleared', year, month)}
                               onDelete={() => deleteBill(bill.id)}
+                              onUpdateNote={(note) => updateBillNote(bill.id, note)}
                             />
                           );
                         })
@@ -757,6 +849,7 @@ export default function BillTracker() {
                               onTogglePaid={() => toggleStatus(bill.id, 'paid', year, month)}
                               onToggleCleared={() => toggleStatus(bill.id, 'cleared', year, month)}
                               onDelete={() => deleteBill(bill.id)}
+                              onUpdateNote={(note) => updateBillNote(bill.id, note)}
                             />
                           );
                         })}
@@ -837,6 +930,17 @@ export default function BillTracker() {
                           />
                         </div>
                       </div>
+                      <div style={{ marginBottom: 10 }}>
+                        <label style={{ display: 'block', fontSize: '0.7rem', color: MUTED, marginBottom: 4 }}>Note (optional)</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Paying from savings"
+                          value={expenseForm.note}
+                          onChange={(e) => setExpenseForm({ ...expenseForm, note: e.target.value })}
+                          onKeyDown={(e) => { if (e.key === 'Enter') addExpense(); }}
+                          style={{ width: '100%', border: `1px solid ${LINE}`, borderRadius: 6, padding: '8px 10px', fontSize: '0.9rem', background: SURFACE, color: INK, boxSizing: 'border-box' }}
+                        />
+                      </div>
                       <button type="button" onClick={addExpense} style={{ background: ACCENT, color: INK, border: 'none', borderRadius: 6, padding: '9px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>
                         Add expense
                       </button>
@@ -891,7 +995,7 @@ export default function BillTracker() {
                               whiteSpace: 'nowrap',
                               color: overdue ? RUST : INK
                             }}
-                            title={`${bill.name}${bill.recurring === false ? ' (one-time)' : ''} \u2014 $${fmt(bill.amount)}`}
+                            title={`${bill.name}${bill.recurring === false ? ' (one-time)' : ''} \u2014 $${fmt(bill.amount)}${bill.note ? ` \u2014 ${bill.note}` : ''}`}
                           >
                             {bill.name}
                           </span>
@@ -918,6 +1022,7 @@ export default function BillTracker() {
                   onTogglePaid={() => toggleStatus(bill.id, 'paid', year, month)}
                   onToggleCleared={() => toggleStatus(bill.id, 'cleared', year, month)}
                   onDelete={() => deleteBill(bill.id)}
+                  onUpdateNote={(note) => updateBillNote(bill.id, note)}
                 />
               ))}
             </CollapsibleDone>
@@ -952,6 +1057,7 @@ export default function BillTracker() {
                               </span>
                             )}
                             {overdue && <span style={{ fontSize: '0.68rem', color: RUST, marginLeft: 8, fontFamily: MONO }}>past due</span>}
+                            <BillNoteField bill={bill} onUpdateNote={(note) => updateBillNote(bill.id, note)} />
                           </div>
                           <div style={{ width: 80, textAlign: 'right', fontFamily: MONO, fontSize: '0.85rem' }}>${fmt(bill.amount)}</div>
                           <div style={{ marginLeft: 12 }}>
@@ -979,6 +1085,7 @@ export default function BillTracker() {
                   onTogglePaid={() => toggleStatus(bill.id, 'paid', y, m)}
                   onToggleCleared={() => toggleStatus(bill.id, 'cleared', y, m)}
                   onDelete={() => deleteBill(bill.id)}
+                  onUpdateNote={(note) => updateBillNote(bill.id, note)}
                 />
               ))}
             </CollapsibleDone>
