@@ -178,6 +178,7 @@ function GoalsPreview() {
 }
 
 function ModuleSection({
+  id,
   icon,
   eyebrow,
   headline,
@@ -186,6 +187,7 @@ function ModuleSection({
   accent,
   visual,
 }: {
+  id: string;
   icon: ReactNode;
   eyebrow: string;
   headline: string;
@@ -196,7 +198,7 @@ function ModuleSection({
 }) {
   const { colors } = useTheme();
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto", padding: "56px 24px" }}>
+    <div id={id} style={{ maxWidth: 640, margin: "0 auto", padding: "56px 24px", scrollMarginTop: 80 }}>
       <div
         style={{
           width: 40,
@@ -333,19 +335,36 @@ export function Landing({ onGetStarted }: { onGetStarted: () => void }) {
           </a>
         </div>
         <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
-          {["Debts", "Bills", "Goals"].map((tag) => (
-            <span
-              key={tag}
+          {[
+            { label: "Debts", href: "#debts-section", accent: GROUP_COLORS["Credit Card"] },
+            { label: "Bills", href: "#bills-section", accent: "#f59e0b" },
+            { label: "Goals", href: "#goals-section", accent: "#6366f1" },
+          ].map((tag) => (
+            <a
+              key={tag.label}
+              href={tag.href}
+              className="transition-colors duration-150 active:scale-95"
               style={{
                 fontSize: 13,
+                fontWeight: 600,
                 color: colors.textMuted,
                 border: `1px solid ${colors.border}`,
                 borderRadius: 99,
                 padding: "5px 14px",
+                textDecoration: "none",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = tag.accent;
+                e.currentTarget.style.borderColor = `${tag.accent}80`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = colors.textMuted;
+                e.currentTarget.style.borderColor = colors.border;
               }}
             >
-              {tag}
-            </span>
+              {tag.label}
+            </a>
           ))}
         </div>
       </div>
@@ -360,6 +379,7 @@ export function Landing({ onGetStarted }: { onGetStarted: () => void }) {
 
       <div style={{ position: "relative" }}>
         <ModuleSection
+          id="debts-section"
           icon={<TrendingDown size={20} />}
           eyebrow="Debts"
           headline="Every balance, moving the right direction"
@@ -373,6 +393,7 @@ export function Landing({ onGetStarted }: { onGetStarted: () => void }) {
           visual={<DebtsPreviewBare />}
         />
         <ModuleSection
+          id="bills-section"
           icon={<Receipt size={20} />}
           eyebrow="Bills"
           headline="Never miss a due date again"
@@ -386,6 +407,7 @@ export function Landing({ onGetStarted }: { onGetStarted: () => void }) {
           visual={<BillsPreviewBare />}
         />
         <ModuleSection
+          id="goals-section"
           icon={<Target size={20} />}
           eyebrow="Goals"
           headline="Fresh goals for what actually matters"
